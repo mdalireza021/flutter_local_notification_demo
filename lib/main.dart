@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notification_demo/theme_mode_controller.dart';
 import 'package:get/get.dart';
+import 'notification_service.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().initNotification();
   runApp(const MyApp());
 }
 
@@ -19,7 +21,6 @@ class MyApp extends StatelessWidget {
         title: 'Notification',
         theme: ThemeData.light(useMaterial3: false),
         darkTheme: ThemeData.dark(useMaterial3: false),
-
         themeMode: themeModeController.rxIsDarkMode.value ? ThemeMode.light : ThemeMode.dark,
         home: const MyHomePage(),
       ),
@@ -61,7 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
               thumbColor:  _controller.rxIsDarkMode.value ? Colors.white : Colors.black,
               trackColor: Colors.black12,
               value: !_controller.rxIsDarkMode.value,
-              onChanged: (value) => _controller.toggleThemeMode()),
+              onChanged: (value) {
+                _controller.toggleThemeMode();
+                NotificationService().showNotification(
+                      title: 'Theme Changed',
+                      body: _controller.rxIsDarkMode.value
+                          ? 'Activated Light Theme'
+                          : 'Activated Dark Theme',
+                    );
+                  }),
             ),
         ],
       ),),
